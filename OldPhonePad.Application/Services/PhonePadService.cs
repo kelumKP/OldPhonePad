@@ -1,12 +1,16 @@
 ﻿using OldPhonePad.Application.Interfaces;
 using OldPhonePad.Domain.Entities;
-using OldPhonePad.Infrastructure.Data;
 
 namespace OldPhonePad.Application.Services
 {
     public class PhonePadService : IPhonePadService
     {
-        private readonly PhonePadDecoder _decoder = new(KeyPadMapping.KeyMap);
+        private readonly PhonePadDecoder _decoder;
+
+        public PhonePadService(PhonePadDecoder decoder)
+        {
+            _decoder = decoder ?? throw new ArgumentNullException(nameof(decoder));
+        }
 
         public string DecodeInput(string input)
         {

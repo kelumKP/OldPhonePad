@@ -8,11 +8,15 @@ namespace OldPhonePad.Domain.Entities
 
         public PhonePadDecoder(Dictionary<string, string> keyMap)
         {
-            _keyMap = keyMap;
+            _keyMap = keyMap ?? throw new ArgumentNullException(nameof(keyMap));
         }
 
         public string Decode(string input)
         {
+            if (string.IsNullOrEmpty(input))
+                return string.Empty;
+
+            // Remove the trailing '#' if present
             if (input.EndsWith("#"))
                 input = input[..^1];
 
@@ -21,41 +25,54 @@ namespace OldPhonePad.Domain.Entities
 
             foreach (var ch in input)
             {
-                if (ch == '*')
+                switch (ch)
                 {
-                    if (buffer.Length > 0)
-                    {
-                        buffer.Clear();
-                    }
-                    else if (result.Length > 0)
-                    {
-                        result.Remove(result.Length - 1, 1);
-                    }
-                    continue;
+                    case '*':
+                        HandleBackspace(buffer, result);
+                        break;
+                    case ' ':
+                        FlushBuffer(buffer, result);
+                        break;
+                    default:
+                        ProcessCharacter(ch, buffer, result);
+                        break;
                 }
-
-                if (ch == ' ')
-                {
-                    if (buffer.Length > 0 && _keyMap.TryGetValue(buffer.ToString(), out var letter))
-                        result.Append(letter);
-                    buffer.Clear();
-                    continue;
-                }
-
-                if (buffer.Length > 0 && buffer[0] != ch)
-                {
-                    if (_keyMap.TryGetValue(buffer.ToString(), out var letter))
-                        result.Append(letter);
-                    buffer.Clear();
-                }
-
-                buffer.Append(ch);
             }
 
-            if (buffer.Length > 0 && _keyMap.TryGetValue(buffer.ToString(), out var lastLetter))
-                result.Append(lastLetter);
+            // Flush any remaining characters in the buffer
+            FlushBuffer(buffer, result);
 
             return result.ToString();
+        }
+
+        private void HandleBackspace(StringBuilder buffer, StringBuilder result)
+        {
+            if (buffer.Length > 0)
+            {
+                buffer.Clear();
+            }
+            else if (result.Length > 0)
+            {
+                result.Remove(result.Length - 1, 1);
+            }
+        }
+
+        private void FlushBuffer(StringBuilder buffer, StringBuilder result)
+        {
+            if (buffer.Length > 0 && _keyMap.TryGetValue(buffer.ToString(), out var letter))
+            {
+                result.Append(letter);
+                buffer.Clear();
+            }
+        }
+
+        private void ProcessCharacter(char ch, StringBuilder buffer, StringBuilder result)
+        {
+            if (buffer.Length > 0 && buffer[0] != ch)
+            {
+                FlushBuffer(buffer, result);
+            }
+            buffer.Append(ch);
         }
     }
 }

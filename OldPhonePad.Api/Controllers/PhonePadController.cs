@@ -11,7 +11,7 @@ namespace OldPhonePad.Api.Controllers
 
         public PhonePadController(IPhonePadService phonePadService)
         {
-            _phonePadService = phonePadService;
+            _phonePadService = phonePadService ?? throw new ArgumentNullException(nameof(phonePadService));
         }
 
         [HttpGet("decode")]

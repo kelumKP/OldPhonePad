@@ -1,6 +1,6 @@
 ﻿namespace OldPhonePad.Infrastructure.Data
 {
-    public static class KeyPadMapping
+    public static class KeyPadData
     {
         public static readonly Dictionary<string, string> KeyMap = new()
         {
