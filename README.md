@@ -49,7 +49,7 @@ The keypad mapping is as follows:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-repo/old-phone-pad-decoder.git
+   git clone https://github.com/kelumkp/old-phone-pad-decoder.git
    cd old-phone-pad-decoder
    ```
 
@@ -64,6 +64,9 @@ The keypad mapping is as follows:
    ```
 
 4. The API will be available at `https://localhost:5001` (or `http://localhost:5000`).
+
+![API_1_](./photos/api_1.png)
+![API_2_](./photos/api_2.png)
 
 ---
 
